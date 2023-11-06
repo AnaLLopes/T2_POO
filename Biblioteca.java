@@ -1,8 +1,10 @@
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.*;
 
 public class Biblioteca {
@@ -52,7 +54,7 @@ public class Biblioteca {
         usuarios.add(new Usuario("Gisele Fernandes", "010"));
 
         // Adicionando empréstimos
-        emprestimos.add(new Emprestimo(livros.get(0), usuarios.get(0), "01/09/2023", "08/09/2023"));
+        emprestimos.add(new Emprestimo(livros.get(1), usuarios.get(0), "01/09/2023", "08/09/2023"));
         emprestimos.add(new Emprestimo(livros.get(1), usuarios.get(0), "02/09/2023", "09/09/2023"));
         emprestimos.add(new Emprestimo(livros.get(2), usuarios.get(0), "03/09/2023", "10/09/2023"));
         emprestimos.add(new Emprestimo(livros.get(3), usuarios.get(0), "04/09/2023", "11/09/2023"));
@@ -72,6 +74,12 @@ public class Biblioteca {
         emprestimos.add(new Emprestimo(livros.get(17), usuarios.get(4), "10/10/2023", "17/10/2023"));        
         emprestimos.add(new Emprestimo(livros.get(18), usuarios.get(5), "11/10/2023", "18/10/2023"));
         emprestimos.add(new Emprestimo(livros.get(19), usuarios.get(6), "12/10/2023", "19/10/2023"));
+    }
+
+    private int getNumeroEmprestimosPorUsuario(String matricula) {
+        return (int) emprestimos.stream()
+                .filter(e -> e.getUsuario().getMatricula().equals(matricula))
+                .count();
     }
 
     // C1: Método que implementa uma busca por título
@@ -106,7 +114,7 @@ public class Biblioteca {
     // O3: Ordenar empréstimos por data de devolução (mais recente primeiro)
     public List<Emprestimo> ordenarEmprestimosPorDataDeDevolucao() {
         return emprestimos.stream()
-                .sorted((e1, e2) -> e2.getDataDeDevolucao().compareTo(e1.getDataDeDevolucao()))
+                .sorted((e1, e2) -> e2.getDataDevolucao().compareTo(e1.getDataDevolucao()))
                 .collect(Collectors.toList());
     }
 
@@ -139,7 +147,7 @@ public class Biblioteca {
                 .collect(Collectors.toList());
 
         return livros.stream()
-                .filter(l -> !livrosEmprestados.contains(livro))
+                .filter(l -> !livrosEmprestados.contains(l))
                 .collect(Collectors.toList());
     }
     // R4: Média Geral de Empréstimos por Usuário
@@ -154,13 +162,8 @@ public class Biblioteca {
     // R5: Relatório de Usuários com Mais de N Empréstimos
     public List<Usuario> relatorioUsuariosComMaisDeNEmprestimos(int N) {
         return usuarios.stream()
-                .filter(u -> u.getNumeroEmprestimosPorUsuario(usuario.getMatricula()) > N)
+                .filter(u -> getNumeroEmprestimosPorUsuario(u.getMatricula()) > N)
                 .collect(Collectors.toList());
     }
 
-    private int getNumeroEmprestimosPorUsuario(String matricula) {
-        return (int) emprestimos.stream()
-                .filter(e -> e.getUsuario().getMatricula().equals(matricula))
-                .count();
-    }
 }
