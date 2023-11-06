@@ -1,6 +1,9 @@
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.*;
 
 public class Biblioteca {
     private List<Livro> livros;
@@ -79,21 +82,85 @@ public class Biblioteca {
     }
 
     // C2: Método que implementa a consulta de livros emprestados para um usuário específico
-    
+    public List<Livro> consultarLivrosEmprestadosParaUsuarioEspecifico(String matricula) {
+        return emprestimos.stream()
+        .filter(e -> e.getUsuario().getMatricula().equals(matricula))
+        .map(Emprestimo::getLivro)
+        .collect(Collectors.toList());
+    }
+
     // O1: Ordenar os livros por ano de publicação utilizando a interface Comparable
+    public List<Livro> ordenarLivrosPorAnoDePublicacao() {
+        return livros.stream()
+                .sorted((l1, l2) -> Integer.compare(l1.getAnoPublicacao(), l2.getAnoPublicacao()))
+                .collect(Collectors.toList());
+    }
 
     // O2: Ordenar os livros por título utilizando a interface Comparator
+    public List<Livro> ordenarLivrosPorTitulo() {
+        return livros.stream()
+                .sorted(Comparator.comparing(Livro::getTitulo))
+                .collect(Collectors.toList());
+    }
 
     // O3: Ordenar empréstimos por data de devolução (mais recente primeiro)
+    public List<Emprestimo> ordenarEmprestimosPorDataDeDevolucao() {
+        return emprestimos.stream()
+                .sorted((e1, e2) -> e2.getDataDeDevolucao().compareTo(e1.getDataDeDevolucao()))
+                .collect(Collectors.toList());
+    }
 
     // R1: Relatório de Livros Mais EmprestadoS
+    public List<Livro> relatorioLivrosMaisEmprestados() {
+        Map<Livro, Long> livroEmprestimoCount = emprestimos.stream()
+                .collect(Collectors.groupingBy(Emprestimo::getLivro, Collectors.counting()));
+
+        return livroEmprestimoCount.entrySet().stream()
+                .sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
 
     // R2: Relatório de Usuários que Mais Pegam Livros Emprestados
+    public List<Usuario> relatorioUsuariosQueMaisPegamLivrosEmprestados() {
+        Map<Usuario, Long> usuarioEmprestimoCount = emprestimos.stream()
+                .collect(Collectors.groupingBy(Emprestimo::getUsuario, Collectors.counting()));
+
+        return usuarioEmprestimoCount.entrySet().stream()
+                .sorted((e1, e2) -> Long.compare(e2.getValue(), e1.getValue()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
 
     // R3: Relatórios de Livros que Nunca Foram Emprestados
+    public List<Livro> relatorioLivrosNuncaEmprestados() {
+        List<Livro> livrosEmprestados = emprestimos.stream()
+                .map(Emprestimo::getLivro)
+                .collect(Collectors.toList());
 
+        return livros.stream()
+                .filter(l -> !livrosEmprestados.contains(livro))
+                .collect(Collectors.toList());
+    }
     // R4: Média Geral de Empréstimos por Usuário
+    public double mediaGeralEmprestimosPorUsuario() {
+        if (usuarios.isEmpty()) {
+            return 0.0;
+        }
+        int totalEmprestimos = emprestimos.size();
+        return (double) totalEmprestimos / usuarios.size();
+    }
 
     // R5: Relatório de Usuários com Mais de N Empréstimos
-    
+    public List<Usuario> relatorioUsuariosComMaisDeNEmprestimos(int N) {
+        return usuarios.stream()
+                .filter(u -> u.getNumeroEmprestimosPorUsuario(usuario.getMatricula()) > N)
+                .collect(Collectors.toList());
+    }
+
+    private int getNumeroEmprestimosPorUsuario(String matricula) {
+        return (int) emprestimos.stream()
+                .filter(e -> e.getUsuario().getMatricula().equals(matricula))
+                .count();
+    }
 }
