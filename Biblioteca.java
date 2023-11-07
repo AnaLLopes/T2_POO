@@ -54,7 +54,7 @@ public class Biblioteca {
         usuarios.add(new Usuario("Gisele Fernandes", "010"));
 
         // Adicionando empréstimos
-        emprestimos.add(new Emprestimo(livros.get(1), usuarios.get(0), "01/09/2023", "08/09/2023"));
+        emprestimos.add(new Emprestimo(livros.get(1), usuarios.get(1), "01/09/2023", "08/09/2023"));
         emprestimos.add(new Emprestimo(livros.get(1), usuarios.get(0), "02/09/2023", "09/09/2023"));
         emprestimos.add(new Emprestimo(livros.get(2), usuarios.get(0), "03/09/2023", "10/09/2023"));
         emprestimos.add(new Emprestimo(livros.get(3), usuarios.get(0), "04/09/2023", "11/09/2023"));
